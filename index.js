@@ -1,8 +1,11 @@
-const express = require("express");
+import express, { json } from "express";
+import cors from "cors";
+app.use(cors());
+
 const app = express();
 
 // Middleware pour pouvoir lire du JSON dans les requêtes
-app.use(express.json());
+app.use(json());
 
 // Route GET /action
 app.get("/action", (req, res) => {
