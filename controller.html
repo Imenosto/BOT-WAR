@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Contrôle du Bot</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 80px 80px 80px;
+      gap: 10px;
+    }
+    button {
+      padding: 15px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    #status {
+      margin-top: 20px;
+      font-weight: bold;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Controle</h1>
+  <div class="grid">
+    <div></div>
+    <button onclick="setDirection('UP')">UP</button>
+    <div></div>
+    <button onclick="setDirection('LEFT')">LEFT</button>
+    <button onclick="setDirection('STAY')">STAY</button>
+    <button onclick="setDirection('RIGHT')">RIGHT</button>
+    <div></div>
+    <button onclick="setDirection('DOWN')">DOWN</button>
+    <div></div>
+  </div>
+  <div id="status">Direction actuelle : inconnue</div>
+
+  <script>
+    async function setDirection(dir) {
+      try {
+        const res = await fetch(`https://bot-api-latest.onrender.com/set-direction?dir=${dir}`);
+        const text = await res.text();
+        document.getElementById('status').textContent = text;
+      } catch (err) {
+        document.getElementById('status').textContent = "Erreur de connexion au bot.";
+        console.error(err);
+      }
+    }
+  </script>
+</body>
+</html>
