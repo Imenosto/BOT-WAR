@@ -1,7 +1,7 @@
 // smartBot.js
 
 let botMemory = {
-  position: { x: 1, y: 1 }, // position de départ
+  position: { x: 1, y: 1 },
   visited: new Set(),
   walls: new Set()
 };
