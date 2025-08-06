@@ -1,58 +1,22 @@
-# name: CI
-
-# on:
-#   push:
-#     branches: [ master ]
-
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     steps:
-#       - uses: actions/checkout@v3
-#       - name: install dependencies
-#         run: npm install
-#       - name: run test
-#         run: npm test
-#       - name: deploy to Render
-#         if: github.ref == 'refs/heads/master'
-#         env:
-#           DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
-#         run: |
-#           curl "$DEPLOY_HOOK"
-
-
-name: CI & Docker Deploy
+name: CI
 
 on:
   push:
     branches: [ master ]
 
 jobs:
-  test-and-deploy:
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Récupérer le code
-        uses: actions/checkout@v3
-
-      - name: Installer les dépendances
+      - uses: actions/checkout@v3
+      - name: install dependencies
         run: npm install
-
-      - name: Lancer les tests
+      - name: run test
         run: npm test
+      - name: deploy to Render
+        if: github.ref == 'refs/heads/master'
+        env:
+          DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+        run: |
+          curl "$DEPLOY_HOOK"
 
-      - name: Connexion à Docker Hub
-        if: success()
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      - name: Build Docker image
-        if: success()
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/bot-api:latest .
-
-      - name: Push Docker image
-        if: success()
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/bot-api:latest
-
-      - name: Déployer sur Render
-        if: success()
-        run: curl -X POST ${{ secrets.RENDER_WEBHOOK_URL }}
