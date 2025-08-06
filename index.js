@@ -34,11 +34,11 @@ app.get("/set-direction", (req, res) => {
 // });
 
 
-if (require.main === module) {
-  app.listen(3000, () => {
-    console.log("🚀 Serveur démarré sur le port 3000");
-  });
-}
+
+app.listen(3000, () => {
+console.log("serveur demarre");
+});
+
 
 
 module.exports = app;
