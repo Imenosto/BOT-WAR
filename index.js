@@ -1,22 +1,27 @@
 const express = require("express");
 const cors = require("cors");
-const bot = require("./autBot");
 
-const app = express();
+const app = express(); 
 app.use(cors());
 app.use(express.json());
 
+let direction = "RIGHT"; 
 
-let direction = "RIGHT";
-app.get("/action", (req, res) => res.json({ move: direction, action: "COLLECT" }));
+
+app.get("/action", (req, res) => {
+  res.json({ move: direction, action: "COLLECT" });
+});
+
 app.get("/set-direction", (req, res) => {
   const dir = req.query.dir?.toUpperCase();
-  const allowed = ["UP", "DOWN", "LEFT", "RIGHT", "STAY"];
-  if (allowed.includes(dir)) {
+  const directionsPossibles = ["UP", "DOWN", "LEFT", "RIGHT", "STAY"];
+
+  if (directionsPossibles.includes(dir)) {
     direction = dir;
-    return res.send(`Direction mise à jour : ${direction}`);
+    res.send("nouvelle direction : " + direction);
+  } else {
+    res.status(400).send("Direction invalide");
   }
-  res.status(400).send("Direction invalide");
 });
 
 // // =======================
@@ -27,7 +32,12 @@ app.get("/set-direction", (req, res) => {
 //   res.json(result);
 // });
 
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//   console.log(`🤖 Bot actif sur le port ${PORT} !`);
-// });
+
+if (require.main === module) {
+  app.listen(3000, () => {
+    console.log("🚀 Serveur démarré sur le port 3000");
+  });
+}
+
+
+module.exports = app;
