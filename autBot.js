@@ -1,66 +1,61 @@
-// smartBot.js
-
-let botMemory = {
+let memoire = {
   position: { x: 1, y: 1 },
-  visited: new Set(),
-  walls: new Set()
+  dejaVues: new Set(),
+  murs: new Set()
 };
 
 function getDirections() {
   return [
-    { move: "UP", dx: 0, dy: -1 },
-    { move: "DOWN", dx: 0, dy: 1 },
-    { move: "LEFT", dx: -1, dy: 0 },
-    { move: "RIGHT", dx: 1, dy: 0 }
+    { nom: "UP", dx: 0, dy: -1 },
+    { nom: "DOWN", dx: 0, dy: 1 },
+    { nom: "LEFT", dx: -1, dy: 0 },
+    { nom: "RIGHT", dx: 1, dy: 0 }
   ];
 }
 
-function shuffle(array) {
-  for (let i = array.length - 1; i > 0; i--) {
+function melanger(liste) {
+  for (let i = liste.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+    [liste[i], liste[j]] = [liste[j], liste[i]];
   }
-  return array;
+  return liste;
 }
 
+
 function decide() {
-  const current = botMemory.position;
-  const key = `${current.x},${current.y}`;
-  botMemory.visited.add(key);
-
-  const directions = shuffle(getDirections());
-
-  let chosen = { move: "STAY", action: "NONE" };
-
+  const pos = memoire.position;
+  const cle = `${pos.x},${pos.y}`;
+  memoire.dejaVues.add(cle);
+  const directions = melanger(getDirections());
+  let choix = { move: "STAY", action: "NONE" };
   for (const dir of directions) {
-    const nextX = current.x + dir.dx;
-    const nextY = current.y + dir.dy;
-    const nextKey = `${nextX},${nextY}`;
+    const x = pos.x + dir.dx;
+    const y = pos.y + dir.dy;
+    const suivante = `${x},${y}`;
 
-    if (!botMemory.visited.has(nextKey) && !botMemory.walls.has(nextKey)) {
-      botMemory.position = { x: nextX, y: nextY };
-      chosen = { move: dir.move, action: "COLLECT" };
-      return chosen;
+    if (!memoire.dejaVues.has(suivante) && !memoire.murs.has(suivante)) {
+      memoire.position = { x, y };
+      choix = { move: dir.nom, action: "COLLECT" };
+      return choix;
     }
   }
 
-  // Si aucune case nouvelle trouvée, on va quand même quelque part (évite l’inertie)
-  const fallback = directions.find(dir => {
-    const nextX = current.x + dir.dx;
-    const nextY = current.y + dir.dy;
-    const nextKey = `${nextX},${nextY}`;
-    return !botMemory.walls.has(nextKey);
+  const secours = directions.find(dir => {
+    const x = pos.x + dir.dx;
+    const y = pos.y + dir.dy;
+    const cle = `${x},${y}`;
+    return !memoire.murs.has(cle);
   });
 
-  if (fallback) {
-    botMemory.position = {
-      x: current.x + fallback.dx,
-      y: current.y + fallback.dy
+  if (secours) {
+    memoire.position = {
+      x: pos.x + secours.dx,
+      y: pos.y + secours.dy
     };
-    chosen = { move: fallback.move, action: "COLLECT" };
+    choix = { move: secours.nom, action: "COLLECT" };
   }
 
-  return chosen;
+  return choix;
 }
 
 module.exports = { decide };

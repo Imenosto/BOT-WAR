@@ -36,7 +36,7 @@ app.get("/set-direction", (req, res) => {
 
 
 app.listen(3000, () => {
-console.log("serveur demarre");
+    console.log("serveur demarre");
 });
 
 
