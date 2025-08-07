@@ -41,4 +41,4 @@ jobs:
         run: pwd && ls -al
 
       - name: docker build
-        run: docker buildx build --tag imenosto/bot-api:latest --load .
+        run: docker buildx build --tag ${{ secrets.DOCKER_USERNAME }}/bot-api:latest --load .
